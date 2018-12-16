@@ -124,24 +124,41 @@ class ChatList extends StatelessWidget {
         Form(
           key: _formKey,
           // This thing goes to the bottom
-          child: TextFormField(
-            validator: (String text) {
-              if (text.isEmpty) {
-                return 'What you tryin\' to send?';
-              }
-            },
-            controller: msgController,
-            decoration: InputDecoration(
-                suffix: IconButton(
-              onPressed: () {
-                if (_formKey.currentState.validate()) {
-                  _sendNewMsg(msgController.text);
+          child: Container(
+            padding: EdgeInsets.all(5.0),
+            margin: EdgeInsets.all(5.0),
+            child: TextFormField(
+              validator: (String text) {
+                if (text.isEmpty) {
+                  return 'What you tryin\' to send?';
                 }
               },
-              icon: Icon(Icons.send),
-            )),
+              controller: msgController,
+              decoration: InputDecoration(
+                  contentPadding: EdgeInsets.all(5.0),
+                  hasFloatingPlaceholder: true,
+                  focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: Colors.grey, width: 0.0),
+                      borderRadius: BorderRadius.circular(20.0)),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: Colors.grey, width: 0.0),
+                      borderRadius: BorderRadius.circular(20.0)),
+                  filled: true,
+                  fillColor: Colors.black26,
+                  hintText: 'Just say it....',
+                  suffix: IconButton(
+                    onPressed: () {
+                      if (_formKey.currentState.validate()) {
+                        _sendNewMsg(msgController.text);
+                      }
+                    },
+                    icon: Icon(Icons.send),
+                  )),
+            ),
           ),
-        )
+        ),
       ],
     );
   }
