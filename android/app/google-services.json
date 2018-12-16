@@ -1,0 +1,86 @@
+{
+  "project_info": {
+    "project_number": "755114708599",
+    "firebase_url": "https://flutterdemo-2da87.firebaseio.com",
+    "project_id": "flutterdemo-2da87",
+    "storage_bucket": "flutterdemo-2da87.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:755114708599:android:a6af4f4e97037250",
+        "android_client_info": {
+          "package_name": "com.example.gdggnr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "755114708599-gb0q9bd5hh2tfpjrhiod54ucsn9d4vs0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcrpppg7ENMGcLjtjSSQHwc9A8-RJMO7I"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:755114708599:android:77328dad5a702ab2",
+        "android_client_info": {
+          "package_name": "io.github.dalwadi2.firebasefl"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "755114708599-novo6iv83mhrt9n8q1d2k5f9sdfthmjl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.github.dalwadi2.firebasefl",
+            "certificate_hash": "65368ad86c4f4b1b9460bffc54602bd9b5aa3015"
+          }
+        },
+        {
+          "client_id": "755114708599-gb0q9bd5hh2tfpjrhiod54ucsn9d4vs0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcrpppg7ENMGcLjtjSSQHwc9A8-RJMO7I"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "755114708599-gb0q9bd5hh2tfpjrhiod54ucsn9d4vs0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
