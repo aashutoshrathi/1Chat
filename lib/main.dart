@@ -13,23 +13,7 @@ class MainWidget extends StatelessWidget {
           title: Text('Awesome Chat App'),
         ),
         body: ChatList(),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: 1,
-          items: [
-            BottomNavigationBarItem(
-              icon: new Icon(Icons.home),
-              title: new Text('Home'),
-            ),
-            BottomNavigationBarItem(
-              icon: new Icon(Icons.mail),
-              title: new Text('Messages'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              title: Text('Profile')
-            )
-          ],
-        ),
+        bottomNavigationBar: BottomBar()
       ),
       theme: ThemeData.dark(),
     );
@@ -66,6 +50,29 @@ class ChatList extends StatelessWidget {
             );
         }
       },
+    );
+  }
+}
+
+class BottomBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      currentIndex: 1,
+      items: [
+        BottomNavigationBarItem(
+          icon: new Icon(Icons.home),
+          title: new Text('Home'),
+        ),
+        BottomNavigationBarItem(
+          icon: new Icon(Icons.mail),
+          title: new Text('Messages'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          title: Text('Profile')
+        )
+      ],
     );
   }
 }
