@@ -13,7 +13,7 @@ class MainWidget extends StatelessWidget {
           title: Text('Awesome Chat App'),
         ),
         body: ChatList(),
-        bottomNavigationBar: BottomBar(),
+        // bottomNavigationBar: BottomBar(),
         drawer: Drawer(
           child: ListView(
             children: <Widget>[
@@ -51,38 +51,82 @@ class MainWidget extends StatelessWidget {
 }
 
 class ChatList extends StatelessWidget {
+  final _formKey = GlobalKey<FormState>();
+  final msgController = TextEditingController();
+
+  void _sendNewMsg(String msg) {
+    var instance = Firestore.instance;
+    CollectionReference ref = instance.collection('chat_133');
+    ref.add({'author': 'Aashu', 'title': '$msg'});
+    msgController.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection('chat_133').snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return new Text('Loading...');
-          default:
-            return new ListView(
-              children:
-                  snapshot.data.documents.map((DocumentSnapshot document) {
-                return Card(
-                    elevation: 2.0,
-                    color: Colors.black26,
-                    child: ListTile(
-                      onTap: () => debugPrint(
-                          "Tapped messages from ${document['title']}"),
-                      leading: Icon(Icons.account_circle, size: 35),
-                      title: new Text(document['title']),
-                      subtitle: new Text(document['author']),
-                      trailing: GestureDetector(
-                        child: Icon(Icons.delete_sweep,
-                            color: Colors.redAccent, size: 30),
-                        onTap: () => debugPrint("Hi Baka, Don't delete it."),
-                      ),
-                    ));
-              }).toList(),
-            );
-        }
-      },
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        Flexible(
+          child: StreamBuilder<QuerySnapshot>(
+            stream: Firestore.instance.collection('chat_133').snapshots(),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError)
+                return new Text('Error: ${snapshot.error}');
+              switch (snapshot.connectionState) {
+                case ConnectionState.waiting:
+                  return new Text('Loading...');
+                default:
+                  return new ListView(
+                    children: snapshot.data.documents
+                        .map((DocumentSnapshot document) {
+                      return Card(
+                          elevation: 2.0,
+                          color: Colors.black26,
+                          child: Column(
+                            children: <Widget>[
+                              ListTile(
+                                onTap: () => print(
+                                    "Tapped messages from ${document['title']}"),
+                                leading: Icon(Icons.account_circle, size: 35),
+                                title: new Text(document['author']),
+                                subtitle: new Text(document['title']),
+                                trailing: GestureDetector(
+                                  child: Icon(Icons.delete_sweep,
+                                      color: Colors.redAccent, size: 30),
+                                  onTap: () => print("Hi Baka, Don't delete it."),
+                                ),
+                              ),
+                            ],
+                          ));
+                    }).toList(),
+                  );
+              }
+            },
+          ),
+        ),
+        Form(
+          key: _formKey,
+          // This thing goes to the bottom
+          child: TextFormField(
+            validator: (String text) {
+              if (text.isEmpty) {
+                return 'What you tryin\' to send?';
+              }
+            },
+            controller: msgController,
+            decoration: InputDecoration(
+                suffix: IconButton(
+              onPressed: () {
+                if (_formKey.currentState.validate()) {
+                  _sendNewMsg(msgController.text);
+                }
+              },
+              icon: Icon(Icons.send),
+            )),
+          ),
+        )
+      ],
     );
   }
 }
