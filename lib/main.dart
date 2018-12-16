@@ -60,6 +60,7 @@ class ChatList extends StatelessWidget {
     CollectionReference ref = instance.collection('chat_133');
     ref.add({'author': 'Aashu', 'title': '$msg'});
     msgController.clear();
+    scrollController.jumpTo(scrollController.position.maxScrollExtent + 54);
   }
 
   @override
