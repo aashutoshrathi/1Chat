@@ -10,7 +10,7 @@ class MainWidget extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Awesome Chat App'),
+          title: Text('Chat App'),
         ),
         body: ChatList(),
         // bottomNavigationBar: BottomBar(),
@@ -80,25 +80,37 @@ class ChatList extends StatelessWidget {
                   return new ListView(
                     children: snapshot.data.documents
                         .map((DocumentSnapshot document) {
-                      return Card(
-                          elevation: 2.0,
-                          color: Colors.black26,
-                          child: Column(
-                            children: <Widget>[
-                              ListTile(
-                                onTap: () => print(
-                                    "Tapped messages from ${document['title']}"),
-                                leading: Icon(Icons.account_circle, size: 35),
-                                title: new Text(document['author']),
-                                subtitle: new Text(document['title']),
-                                trailing: GestureDetector(
-                                  child: Icon(Icons.delete_sweep,
-                                      color: Colors.redAccent, size: 30),
-                                  onTap: () => print("Hi Baka, Don't delete it."),
+                      return Container(
+                          child: Row(
+                        mainAxisAlignment: document['author'] == "Aashu"
+                            ? MainAxisAlignment.end
+                            : MainAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            // All styling here only
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
+                            margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                                color: document['author'] == "Aashu"
+                                    ? Colors.blueAccent
+                                    : Colors.black,
+                                borderRadius: BorderRadius.circular(25.0)),
+                            child: Column(
+                              children: <Widget>[
+                                Icon(Icons.account_circle),
+                                Text(
+                                  document['author'],
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15.0),
                                 ),
-                              ),
-                            ],
-                          ));
+                                Text(document['title']),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ));
                     }).toList(),
                   );
               }
@@ -126,27 +138,6 @@ class ChatList extends StatelessWidget {
             )),
           ),
         )
-      ],
-    );
-  }
-}
-
-class BottomBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      currentIndex: 1,
-      items: [
-        BottomNavigationBarItem(
-          icon: new Icon(Icons.home),
-          title: new Text('Home'),
-        ),
-        BottomNavigationBarItem(
-          icon: new Icon(Icons.mail),
-          title: new Text('Messages'),
-        ),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.person), title: Text('Profile'))
       ],
     );
   }
