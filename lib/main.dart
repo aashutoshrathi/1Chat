@@ -53,6 +53,7 @@ class MainWidget extends StatelessWidget {
 class ChatList extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final msgController = TextEditingController();
+  final scrollController = ScrollController();
 
   void _sendNewMsg(String msg) {
     var instance = Firestore.instance;
@@ -78,6 +79,7 @@ class ChatList extends StatelessWidget {
                   return new Text('Loading...');
                 default:
                   return new ListView(
+                    controller: scrollController,
                     children: snapshot.data.documents
                         .map((DocumentSnapshot document) {
                       return Container(
@@ -90,7 +92,8 @@ class ChatList extends StatelessWidget {
                             // All styling here only
                             padding: EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 10),
-                            margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
                             decoration: BoxDecoration(
                                 color: document['author'] == "Aashu"
                                     ? Colors.blueAccent
@@ -98,7 +101,7 @@ class ChatList extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(25.0)),
                             child: Column(
                               children: <Widget>[
-                                Icon(Icons.account_circle),
+                                // Icon(Icons.account_circle),
                                 Text(
                                   document['author'],
                                   style: TextStyle(
