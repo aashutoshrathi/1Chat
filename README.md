@@ -1,6 +1,6 @@
-# gdg_gnr
+# Chat App
 
-A new Flutter project.
+A Flutter and FireStore ChatApp
 
 ## Getting Started
 
