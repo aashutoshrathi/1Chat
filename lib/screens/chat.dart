@@ -1,5 +1,24 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+class ChatWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Chat App'),
+        ),
+        body: ChatList(),
+        // bottomNavigationBar: BottomBar(),
+        // drawer: CustomDrawer(),
+      ),
+      theme: ThemeData.dark(),
+    );
+  }
+}
 
 class ChatList extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
