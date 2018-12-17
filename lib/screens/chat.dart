@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -12,8 +11,6 @@ class ChatWidget extends StatelessWidget {
           title: Text('Chat App'),
         ),
         body: ChatList(),
-        // bottomNavigationBar: BottomBar(),
-        // drawer: CustomDrawer(),
       ),
       theme: ThemeData.dark(),
     );
@@ -28,7 +25,7 @@ class ChatList extends StatelessWidget {
   void _sendNewMsg(String msg) {
     var instance = Firestore.instance;
     CollectionReference ref = instance.collection('chat_133');
-    ref.add({'author': 'Aashu', 'title': '$msg'});
+    ref.add({'author': 'Anshuman', 'title': '$msg'});
     msgController.clear();
     scrollController.jumpTo(scrollController.position.maxScrollExtent + 54);
   }
@@ -47,7 +44,7 @@ class ChatList extends StatelessWidget {
                 return new Text('Error: ${snapshot.error}');
               switch (snapshot.connectionState) {
                 case ConnectionState.waiting:
-                  return new Text('Loading...');
+                  return Center(child: new Text('Loading...'));
                 default:
                   return new ListView(
                     controller: scrollController,
@@ -55,7 +52,7 @@ class ChatList extends StatelessWidget {
                         .map((DocumentSnapshot document) {
                       return Container(
                           child: Row(
-                        mainAxisAlignment: document['author'] == "Aashu"
+                        mainAxisAlignment: document['author'] == "Anshuman"
                             ? MainAxisAlignment.end
                             : MainAxisAlignment.start,
                         children: <Widget>[
@@ -66,7 +63,7 @@ class ChatList extends StatelessWidget {
                             margin: EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 10),
                             decoration: BoxDecoration(
-                                color: document['author'] == "Aashu"
+                                color: document['author'] == "Anshuman"
                                     ? Colors.blueAccent
                                     : Colors.black,
                                 borderRadius: BorderRadius.circular(25.0)),
@@ -108,21 +105,18 @@ class ChatList extends StatelessWidget {
                   },
                   controller: msgController,
                   decoration: InputDecoration(
-                    border: InputBorder.none,
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.send),
-                      color: Colors.white,
-                      onPressed: () {
-                        if(_formKey.currentState.validate()) {
-                          _sendNewMsg(msgController.text);
-                        }
-                      },
-                    ),
-                    contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
-                    hintText: 'Type message here...'
-                    
-
-                  ),
+                      border: InputBorder.none,
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.send),
+                        color: Colors.white,
+                        onPressed: () {
+                          if (_formKey.currentState.validate()) {
+                            _sendNewMsg(msgController.text);
+                          }
+                        },
+                      ),
+                      contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
+                      hintText: 'Type message here...'),
                 ),
               ),
             )),
