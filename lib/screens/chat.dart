@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gdg_gnr/screens/auth.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:gdg_gnr/screens/login.dart';
+import 'package:intl/intl.dart';
 
 class ChatWidget extends StatelessWidget {
   @override
@@ -9,6 +13,34 @@ class ChatWidget extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(
           title: Text('Chat App'),
+          actions: <Widget>[
+            Row(
+              children: <Widget>[
+                GestureDetector(
+                  child: CircleAvatar(
+                    backgroundImage: CachedNetworkImageProvider(
+                        'https://www.atomix.com.au/media/2015/06/atomix_user31.png'),
+                  ),
+                  onTap: () {
+                    print('User Profile');
+                  },
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  child: GestureDetector(
+                    child: Icon(Icons.exit_to_app, size: 30.0),
+                    onTap: () {
+                      Auth().signOut();
+                      Navigator.pop(context,
+                          MaterialPageRoute(builder: (context) {
+                        return LoginPage();
+                      }));
+                    },
+                  ),
+                )
+              ],
+            ),
+          ],
         ),
         body: ChatList(),
       ),
@@ -30,14 +62,19 @@ class _ChatListState extends State<ChatList> {
   final _formKey = GlobalKey<FormState>();
   final msgController = TextEditingController();
   final scrollController = ScrollController();
-  final curUser = "User";
+  final curUser = 'Anon';
 
   void _sendNewMsg(String msg) {
     var instance = Firestore.instance;
     CollectionReference ref = instance.collection('chat_133');
-    ref.add({'author': '$curUser', 'title': '$msg'});
+    ref.add(
+        {'author': '$curUser', 'msg': '$msg', 'timestamp': '$DateTime.now()'});
     msgController.clear();
     scrollController.jumpTo(scrollController.position.maxScrollExtent + 54);
+  }
+
+  String _date(DateTime timestamp) {
+    return DateFormat.jm().format(timestamp);
   }
 
   @override
@@ -86,10 +123,12 @@ class _ChatListState extends State<ChatList> {
                                       fontWeight: FontWeight.bold,
                                       fontSize: 15.0),
                                 ),
-                                Text(document['title']),
+                                Text(document['msg']),
                               ],
                             ),
                           ),
+                          Text(_date(document['timestamp']),
+                              style: TextStyle(fontSize: 10.0)),
                         ],
                       ));
                     }).toList(),

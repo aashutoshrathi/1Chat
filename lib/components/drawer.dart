@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gdg_gnr/screens/auth.dart';
+import 'package:gdg_gnr/screens/login.dart';
 
 class CustomDrawer extends StatelessWidget {
   @override
@@ -28,10 +29,14 @@ class CustomDrawer extends StatelessWidget {
             title: Text('Login'),
           ),
           ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('Logout'),
-            onTap: () => Auth().signOut()
-          )
+              leading: Icon(Icons.exit_to_app),
+              title: Text('Logout'),
+              onTap: () {
+                Auth().signOut();
+                Navigator.pop(context, MaterialPageRoute(builder: (context) {
+                  return LoginPage();
+                }));
+              })
         ],
       ),
     );
