@@ -17,10 +17,6 @@ class LoginPage extends StatelessWidget {
     return user;
   }
 
-  void _signOut() async {
-    _auth.signOut();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -42,24 +38,6 @@ class LoginPage extends StatelessWidget {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return ChatWidget();
             }));
-          },
-        ),
-        Container(margin: EdgeInsets.all(10.0)),
-        OutlineButton(
-          color: Colors.redAccent[100],
-          textColor: Colors.red,
-          borderSide: BorderSide(color: Colors.red),
-          shape: new RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(20.0)),
-          child: Text(
-            'Sign Out',
-            textScaleFactor: 1.5,
-          ),
-          onPressed: () async {
-            _signOut();
-            // Navigator.push(context, MaterialPageRoute(builder: (context) {
-            //   return ChatList();
-            // }));
           },
         ),
       ],

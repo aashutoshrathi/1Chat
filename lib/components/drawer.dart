@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gdg_gnr/screens/auth.dart';
 
 class CustomDrawer extends StatelessWidget {
   @override
@@ -29,6 +30,7 @@ class CustomDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),
+            onTap: () => Auth().signOut()
           )
         ],
       ),

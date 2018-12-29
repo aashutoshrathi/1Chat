@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gdg_gnr/components/drawer.dart';
 import 'package:gdg_gnr/screens/chat.dart';
-import 'package:gdg_gnr/screens/login.dart';
 
 void main() => runApp(MainWidget());
 

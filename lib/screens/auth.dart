@@ -27,6 +27,6 @@ class Auth implements AuthImpl {
   }
 
   Future<void> signOut() async {
-    return _firebaseAuth.signOut();
+    _firebaseAuth.signOut();
   }
 }

@@ -17,15 +17,25 @@ class ChatWidget extends StatelessWidget {
   }
 }
 
-class ChatList extends StatelessWidget {
+class ChatList extends StatefulWidget {
+  _ChatListState createState() => _ChatListState();
+}
+
+class _ChatListState extends State<ChatList> {
+  @override
+  initState() {
+    super.initState();
+  }
+
   final _formKey = GlobalKey<FormState>();
   final msgController = TextEditingController();
   final scrollController = ScrollController();
+  final curUser = "User";
 
   void _sendNewMsg(String msg) {
     var instance = Firestore.instance;
     CollectionReference ref = instance.collection('chat_133');
-    ref.add({'author': 'Anshuman', 'title': '$msg'});
+    ref.add({'author': '$curUser', 'title': '$msg'});
     msgController.clear();
     scrollController.jumpTo(scrollController.position.maxScrollExtent + 54);
   }
@@ -52,7 +62,7 @@ class ChatList extends StatelessWidget {
                         .map((DocumentSnapshot document) {
                       return Container(
                           child: Row(
-                        mainAxisAlignment: document['author'] == "Anshuman"
+                        mainAxisAlignment: document['author'] == curUser
                             ? MainAxisAlignment.end
                             : MainAxisAlignment.start,
                         children: <Widget>[
@@ -63,7 +73,7 @@ class ChatList extends StatelessWidget {
                             margin: EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 10),
                             decoration: BoxDecoration(
-                                color: document['author'] == "Anshuman"
+                                color: document['author'] == curUser
                                     ? Colors.blueAccent
                                     : Colors.black,
                                 borderRadius: BorderRadius.circular(25.0)),
