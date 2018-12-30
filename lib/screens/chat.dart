@@ -66,7 +66,7 @@ class _ChatListState extends State<ChatList> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: Text('1Chat'),
+          title: Text('1Chat β'),
           actions: <Widget>[
             Row(
               children: <Widget>[

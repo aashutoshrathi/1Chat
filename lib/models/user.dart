@@ -17,10 +17,10 @@ class User {
         imgURL = user.photoUrl;
 
   User.fromMap(Map<dynamic, dynamic> map)
-    : assert(map['id'] != null),
-      id = map['id'],
-      name = map['name'],
-      imgURL = map['imgURL'];
+      : assert(map['id'] != null),
+        id = map['id'],
+        name = map['name'],
+        imgURL = map['imgURL'];
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> _userMap = Map();
@@ -30,7 +30,6 @@ class User {
     return _userMap;
   }
 
-
   @override
-  String toString() => "User<$id | $name | $imgURL>";
+  String toString() => "User<$id | $name>";
 }

@@ -10,7 +10,7 @@ class MainWidget extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: Text('1Chat'),
+          title: Text('1Chat β'),
         ),
         body: LoginPage(),
         // bottomNavigationBar: BottomBar(),
