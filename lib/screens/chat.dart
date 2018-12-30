@@ -113,6 +113,10 @@ class _ChatListState extends State<ChatList> {
                                     ),
                               Container(
                                 // All styling here only
+                                // alignment: Alignment(-1.0, 0.0),
+                                constraints: BoxConstraints(
+                                    maxWidth: 200.0,
+                                  ),
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 10),
                                 margin: EdgeInsets.symmetric(
