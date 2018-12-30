@@ -17,7 +17,7 @@ class _LoginPageState extends State<LoginPage> {
     FirebaseUser user = await Auth().signIn();
     if (user != null) {
       Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return ChatWidget();
+        return ChatList();
       }));
     }
   }
