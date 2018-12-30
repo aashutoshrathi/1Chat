@@ -104,9 +104,13 @@ class _ChatListState extends State<ChatList> {
                                 ? MainAxisAlignment.end
                                 : MainAxisAlignment.start,
                             children: <Widget>[
-                              CircleAvatar(
-                                backgroundImage: CachedNetworkImageProvider(document['img']),
-                              ),
+                              document['id'] == curUser.id
+                                  ? SizedBox()
+                                  : CircleAvatar(
+                                      backgroundImage:
+                                          CachedNetworkImageProvider(
+                                              document['img']),
+                                    ),
                               Container(
                                 // All styling here only
                                 padding: EdgeInsets.symmetric(
@@ -133,8 +137,10 @@ class _ChatListState extends State<ChatList> {
                                   ],
                                 ),
                               ),
-                              Text(_date(document['timestamp']),
-                                  style: TextStyle(fontSize: 10.0)),
+                              Container(
+                                child: Text(_date(document['timestamp']),
+                                    style: TextStyle(fontSize: 10.0)),
+                              ),
                             ],
                           ));
                         }).toList(),
