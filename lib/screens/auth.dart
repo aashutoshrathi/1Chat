@@ -1,32 +1,55 @@
-import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gdg_gnr/models/user.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'dart:async';
 
-abstract class AuthImpl {
-  Future<String> signIn(String email, String password);
-  Future<String> signUp(String email, String password);
-  Future<String> getCurrentUser();
-  Future<void> signOut();
-}
+class Auth {
+  static FirebaseAuth _auth = FirebaseAuth.instance;
+  static GoogleSignIn _googleSignIn = GoogleSignIn();
+  static String _kUserPref = "UserPref";
+  static User _curUser;
 
-class Auth implements AuthImpl {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  Future<FirebaseUser> signIn() async {
+    GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    FirebaseUser user = await _auth.signInWithGoogle(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    print("signed in " + user.displayName);
+    assert(user != null);
+    User _loggedInUser = User.fromFirebaseUser(user);
+    print(_loggedInUser.toString());
+    _curUser = _loggedInUser;
 
-  Future<String> signIn(String email, String password) async {
-    FirebaseUser user = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
-    return user.uid;
-  }
-
-  Future<String> signUp(String email, String password) async {
-    FirebaseUser user = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
-    return user.uid;
-  }
-
-  Future<String> getCurrentUser() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
-    return user.uid;
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    final response = await pref
+        .setString(_kUserPref, json.encode(_loggedInUser.toJson()))
+        .then((_) {
+      print('Shared Preference saved');
+      return user;
+    }).catchError((_) {
+      print('Unable to save to sharedPreference');
+      return null;
+    });
+    return response;
   }
 
   Future<void> signOut() async {
-    _firebaseAuth.signOut();
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.remove(_kUserPref);
+    print('User removed');
+    _curUser = null;
+    return _auth.signOut();
+  }
+
+  User getCurrentUser() {
+    return _curUser;
+  }
+
+  void setCurrentUser(User curUser) {
+    _curUser = curUser;
   }
 }

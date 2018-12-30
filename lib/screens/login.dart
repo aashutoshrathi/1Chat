@@ -1,46 +1,44 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gdg_gnr/screens/auth.dart';
 import 'package:gdg_gnr/screens/chat.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
-class LoginPage extends StatelessWidget {
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  Future<FirebaseUser> _handleSignIn() async {
-    GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    FirebaseUser user = await _auth.signInWithGoogle(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    print("Signed in " + user.displayName);
-    return user;
+class LoginPage extends StatefulWidget {
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  @override
+  initState() {
+    super.initState();
+  }
+
+  Future<void> _handleSignIn() async {
+    FirebaseUser user = await Auth().signIn();
+    if (user != null) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return ChatWidget();
+      }));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        OutlineButton(
-          color: Colors.greenAccent[100],
-          textColor: Colors.green,
-          borderSide: BorderSide(color: Colors.green),
-          shape: new RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(20.0)),
-          child: Text(
-            'Log In with Google',
-            textScaleFactor: 1.5,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          OutlineButton(
+            borderSide: BorderSide(color: Colors.green),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            child: Text('Login with Google'),
+            onPressed: () => _handleSignIn(),
           ),
-          onPressed: () async {
-            _handleSignIn();
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return ChatWidget();
-            }));
-          },
-        ),
-      ],
-    ));
+        ],
+      ),
+    );
   }
 }

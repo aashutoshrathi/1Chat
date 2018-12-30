@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gdg_gnr/models/user.dart';
 import 'package:gdg_gnr/screens/auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:gdg_gnr/screens/login.dart';
@@ -54,21 +55,26 @@ class ChatList extends StatefulWidget {
 }
 
 class _ChatListState extends State<ChatList> {
+  User curUser;
   @override
   initState() {
+    User user = Auth().getCurrentUser();
+    if (user != null) {
+      setState(() {
+        curUser = user;
+      });
+    }
     super.initState();
   }
 
   final _formKey = GlobalKey<FormState>();
   final msgController = TextEditingController();
   final scrollController = ScrollController();
-  final curUser = 'Anon';
 
   void _sendNewMsg(String msg) {
     var instance = Firestore.instance;
     CollectionReference ref = instance.collection('chat_133');
-    ref.add(
-        {'author': '$curUser', 'msg': '$msg', 'timestamp': '$DateTime.now()'});
+    ref.add({'author': '${curUser.name}', 'msg': '$msg', 'timestamp': DateTime.now()});
     msgController.clear();
     scrollController.jumpTo(scrollController.position.maxScrollExtent + 54);
   }
@@ -99,7 +105,7 @@ class _ChatListState extends State<ChatList> {
                         .map((DocumentSnapshot document) {
                       return Container(
                           child: Row(
-                        mainAxisAlignment: document['author'] == curUser
+                        mainAxisAlignment: document['author'] == curUser.name
                             ? MainAxisAlignment.end
                             : MainAxisAlignment.start,
                         children: <Widget>[
@@ -110,7 +116,7 @@ class _ChatListState extends State<ChatList> {
                             margin: EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 10),
                             decoration: BoxDecoration(
-                                color: document['author'] == curUser
+                                color: document['author'] == curUser.name
                                     ? Colors.blueAccent
                                     : Colors.black,
                                 borderRadius: BorderRadius.circular(25.0)),
