@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 import 'package:gdg_gnr/models/user.dart';
 import 'package:gdg_gnr/screens/auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -38,7 +41,12 @@ class _ChatListState extends State<ChatList> {
       'timestamp': DateTime.now()
     });
     msgController.clear();
-    scrollController.jumpTo(scrollController.position.maxScrollExtent + 54);
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
+    scrollController.animateTo(
+      scrollController.position.maxScrollExtent + 160,
+      curve: Curves.easeOut,
+      duration: const Duration(milliseconds: 400),
+    );
   }
 
   String _date(DateTime timestamp) {
@@ -47,6 +55,13 @@ class _ChatListState extends State<ChatList> {
 
   @override
   Widget build(BuildContext context) {
+    Timer(
+        Duration(milliseconds: 1000),
+        () => scrollController.animateTo(
+              scrollController.position.maxScrollExtent + 160,
+              curve: Curves.easeOut,
+              duration: const Duration(milliseconds: 400),
+            ));
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -104,19 +119,21 @@ class _ChatListState extends State<ChatList> {
                                 ? MainAxisAlignment.end
                                 : MainAxisAlignment.start,
                             children: <Widget>[
-                              document['id'] == curUser.id
-                                  ? SizedBox()
-                                  : CircleAvatar(
-                                      backgroundImage:
-                                          CachedNetworkImageProvider(
-                                              document['img']),
-                                    ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: document['id'] == curUser.id
+                                    ? SizedBox()
+                                    : CircleAvatar(
+                                        backgroundImage:
+                                            CachedNetworkImageProvider(
+                                                document['img']),
+                                      ),
+                              ),
                               Container(
                                 // All styling here only
-                                // alignment: Alignment(-1.0, 0.0),
                                 constraints: BoxConstraints(
-                                    maxWidth: 200.0,
-                                  ),
+                                  maxWidth: 200.0,
+                                ),
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 10),
                                 margin: EdgeInsets.symmetric(
@@ -133,11 +150,13 @@ class _ChatListState extends State<ChatList> {
                                       document['id'] == curUser.id
                                           ? 'You'
                                           : document['author'],
+                                      textAlign: TextAlign.left,
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 15.0),
                                     ),
-                                    Text(document['msg']),
+                                    Text(document['msg'],
+                                        textAlign: TextAlign.left),
                                   ],
                                 ),
                               ),
