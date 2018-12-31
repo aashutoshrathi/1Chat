@@ -1,5 +1,5 @@
 <p align="center"><img src="assets/icon.png" align="center" width="175"></p>
-<h1 align="center">chatApp</h1>
+<h1 align="center">1Chat<sup>β</sup></h1>
 
 <p align="center">
 <p align="center">Flutter and Firestre powered Chat Application</p>

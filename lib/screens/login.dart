@@ -25,20 +25,12 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          OutlineButton(
-            borderSide: BorderSide(color: Colors.green),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            child: Text('Login with Google'),
-            onPressed: () => _handleSignIn(),
-          ),
-        ],
-      ),
-    );
+        child: FloatingActionButton.extended(
+      onPressed: () => _handleSignIn(),
+      backgroundColor: Colors.white,
+      icon: Image.asset('assets/google_g_logo.png', height: 40.0),
+      label: const Text('Sign in with Google'),
+      // Always remember FAB is far sexier than normal button ;)
+    ));
   }
 }

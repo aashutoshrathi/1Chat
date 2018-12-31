@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
@@ -129,40 +128,47 @@ class _ChatListState extends State<ChatList> {
                                                 document['img']),
                                       ),
                               ),
-                              Container(
-                                // All styling here only
-                                constraints: BoxConstraints(
-                                  maxWidth: 200.0,
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 10),
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 10),
-                                decoration: BoxDecoration(
-                                    color: document['id'] == curUser.id
-                                        ? Colors.blueAccent
-                                        : Colors.black,
-                                    borderRadius: BorderRadius.circular(25.0)),
-                                child: Column(
-                                  children: <Widget>[
-                                    // Icon(Icons.account_circle),
-                                    Text(
-                                      document['id'] == curUser.id
-                                          ? 'You'
-                                          : document['author'],
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15.0),
+                              Stack(
+                                children: <Widget>[
+                                  Container(
+                                    // All styling here only
+                                    constraints: BoxConstraints(
+                                      maxWidth: 200.0,
                                     ),
-                                    Text(document['msg'],
-                                        textAlign: TextAlign.left),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                child: Text(_date(document['timestamp']),
-                                    style: TextStyle(fontSize: 10.0)),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 10),
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 10),
+                                    decoration: BoxDecoration(
+                                        color: document['id'] == curUser.id
+                                            ? Colors.blueAccent
+                                            : Colors.black,
+                                        borderRadius:
+                                            BorderRadius.circular(25.0)),
+                                    child: Column(
+                                      children: <Widget>[
+                                        // Icon(Icons.account_circle),
+                                        Text(
+                                          document['id'] == curUser.id
+                                              ? 'You'
+                                              : document['author'],
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15.0),
+                                        ),
+                                        Text(document['msg'],
+                                            textAlign: TextAlign.left),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    child: Text(_date(document['timestamp']),
+                                        textAlign: TextAlign.right,
+                                        style: TextStyle(fontSize: 10.0)),
+                                    alignment: Alignment(1, -1),
+                                  ),
+                                ],
                               ),
                             ],
                           ));
