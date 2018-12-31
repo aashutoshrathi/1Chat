@@ -128,47 +128,42 @@ class _ChatListState extends State<ChatList> {
                                                 document['img']),
                                       ),
                               ),
-                              Stack(
-                                children: <Widget>[
-                                  Container(
-                                    // All styling here only
-                                    constraints: BoxConstraints(
-                                      maxWidth: 200.0,
+                              Container(
+                                // All styling here only
+                                constraints: BoxConstraints(
+                                  maxWidth: 200.0,
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                                decoration: BoxDecoration(
+                                    color: document['id'] == curUser.id
+                                        ? Colors.blueAccent
+                                        : Colors.black,
+                                    borderRadius: BorderRadius.circular(25.0)),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      document['id'] == curUser.id
+                                          ? CrossAxisAlignment.end
+                                          : CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      document['id'] == curUser.id
+                                          ? 'You'
+                                          : document['author'],
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15.0),
                                     ),
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 10),
-                                    margin: EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 10),
-                                    decoration: BoxDecoration(
-                                        color: document['id'] == curUser.id
-                                            ? Colors.blueAccent
-                                            : Colors.black,
-                                        borderRadius:
-                                            BorderRadius.circular(25.0)),
-                                    child: Column(
-                                      children: <Widget>[
-                                        // Icon(Icons.account_circle),
-                                        Text(
-                                          document['id'] == curUser.id
-                                              ? 'You'
-                                              : document['author'],
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15.0),
-                                        ),
-                                        Text(document['msg'],
-                                            textAlign: TextAlign.left),
-                                      ],
+                                    Text(document['msg']),
+                                    Container(
+                                      child: Text(_date(document['timestamp']),
+                                          textAlign: TextAlign.right,
+                                          style: TextStyle(fontSize: 10.0)),
                                     ),
-                                  ),
-                                  Container(
-                                    child: Text(_date(document['timestamp']),
-                                        textAlign: TextAlign.right,
-                                        style: TextStyle(fontSize: 10.0)),
-                                    alignment: Alignment(1, -1),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ],
                           ));
