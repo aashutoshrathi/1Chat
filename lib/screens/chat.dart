@@ -135,7 +135,7 @@ class _ChatListState extends State<ChatList> {
                                   maxWidth: 200.0,
                                 ),
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 10),
+                                    horizontal: 16, vertical: 8),
                                 margin: EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 10),
                                 decoration: BoxDecoration(
@@ -149,14 +149,14 @@ class _ChatListState extends State<ChatList> {
                                           ? CrossAxisAlignment.end
                                           : CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Text(
-                                      document['id'] == curUser.id
-                                          ? 'You'
-                                          : document['author'],
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15.0),
-                                    ),
+                                    document['id'] == curUser.id
+                                        ? SizedBox()
+                                        : Text(
+                                            document['author'],
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 15.0),
+                                          ),
                                     RichTextView(text: document['msg']),
                                     Container(
                                       child: Text(_date(document['timestamp']),

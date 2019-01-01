@@ -44,15 +44,25 @@ class RichTextView extends StatelessWidget {
               text: '$word ',
               url: word,
               style: _style.copyWith(
-                  color: Colors.white, decoration: TextDecoration.underline))
-          : new TextSpan(text: '$word ', style: _style));
+                  color: Colors.white,
+                  decoration: TextDecoration.underline,
+                  fontWeight: FontWeight.w100))
+          : new TextSpan(
+              text: '$word ',
+              style: _style.copyWith(fontWeight: FontWeight.w100)));
     });
     if (span.length > 0) {
       return new RichText(
-        text: new TextSpan(text: '', children: span),
+        text: new TextSpan(
+            text: '',
+            children: span,
+            style: TextStyle(fontWeight: FontWeight.w100)),
       );
     } else {
-      return new Text(text);
+      return new Text(
+        text,
+        style: TextStyle(fontWeight: FontWeight.w100),
+      );
     }
   }
 }
