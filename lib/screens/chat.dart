@@ -6,10 +6,13 @@ import 'package:gdg_gnr/components/rich_text_view.dart';
 import 'package:gdg_gnr/models/user.dart';
 import 'package:gdg_gnr/screens/auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:gdg_gnr/screens/camera_screen.dart';
 import 'package:gdg_gnr/screens/login.dart';
 import 'package:intl/intl.dart';
 
 class ChatList extends StatefulWidget {
+  final cameras;
+  ChatList(this.cameras);
   _ChatListState createState() => _ChatListState();
 }
 
@@ -86,7 +89,7 @@ class _ChatListState extends State<ChatList> {
                       Auth().signOut();
                       Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) {
-                        return LoginPage();
+                        return LoginPage(widget.cameras);
                       }));
                     },
                   ),
@@ -193,7 +196,10 @@ class _ChatListState extends State<ChatList> {
                       decoration: InputDecoration(
                           prefixIcon: IconButton(
                             icon: Icon(Icons.camera),
-                            onPressed: () => print('Not now'),
+                            onPressed: () => Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return CameraApp(widget.cameras);
+                                })),
                             color: Colors.white,
                             tooltip: 'Camera',
                           ),

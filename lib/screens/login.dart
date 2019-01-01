@@ -4,6 +4,8 @@ import 'package:gdg_gnr/screens/auth.dart';
 import 'package:gdg_gnr/screens/chat.dart';
 
 class LoginPage extends StatefulWidget {
+  final cameras;
+  LoginPage(this.cameras);
   _LoginPageState createState() => _LoginPageState();
 }
 
@@ -17,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
     FirebaseUser user = await Auth().signIn();
     if (user != null) {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-        return ChatList();
+        return ChatList(widget.cameras);
       }));
     }
   }

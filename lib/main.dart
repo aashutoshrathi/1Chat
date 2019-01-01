@@ -19,7 +19,7 @@ class MainWidget extends StatefulWidget {
 
 class _MainWidgetState extends State<MainWidget> {
   final String _kUserPref = "UserPref";
-  Widget _routingWidget = LoginPage();
+  Widget _routingWidget = LoginPage(cameras);
 
   Future<Null> getSharedPref() async {
     final SharedPreferences _localPref = await SharedPreferences.getInstance();
@@ -27,7 +27,7 @@ class _MainWidgetState extends State<MainWidget> {
     if (userProfile != null) {
       Auth().setCurrentUser(User.fromMap(json.decode(userProfile)));
       setState(() {
-        _routingWidget = ChatList();
+        _routingWidget = ChatList(cameras);
       });
     }
   }
