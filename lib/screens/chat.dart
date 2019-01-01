@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+import 'package:gdg_gnr/components/rich_text_view.dart';
 import 'package:gdg_gnr/models/user.dart';
 import 'package:gdg_gnr/screens/auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -156,7 +157,7 @@ class _ChatListState extends State<ChatList> {
                                           fontWeight: FontWeight.bold,
                                           fontSize: 15.0),
                                     ),
-                                    Text(document['msg']),
+                                    RichTextView(text: document['msg']),
                                     Container(
                                       child: Text(_date(document['timestamp']),
                                           textAlign: TextAlign.right,
