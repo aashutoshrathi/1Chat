@@ -86,13 +86,6 @@ class _ChatListState extends State<ChatList> {
 
   @override
   Widget build(BuildContext context) {
-    Timer(
-        Duration(milliseconds: 1000),
-        () => scrollController.animateTo(
-              scrollController.position.maxScrollExtent + 160,
-              curve: Curves.easeOut,
-              duration: const Duration(milliseconds: 400),
-            ));
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -220,6 +213,7 @@ class _ChatListState extends State<ChatList> {
                     elevation: 5.0,
                     borderRadius: BorderRadius.circular(20.0),
                     child: TextFormField(
+                      keyboardType: TextInputType.multiline,
                       validator: (String text) {
                         if (text.isEmpty) {
                           return 'What you tryin\' to send? :/';
@@ -257,6 +251,7 @@ class _ChatListState extends State<ChatList> {
                           border: InputBorder.none,
                           suffixIcon: IconButton(
                             icon: Icon(Icons.send),
+                            tooltip: 'Send',
                             onPressed: () {
                               if (_formKey.currentState.validate()) {
                                 _sendNewMsg(msgController.text, false);
