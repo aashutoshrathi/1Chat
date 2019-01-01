@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:gdg_gnr/models/user.dart';
 import 'package:gdg_gnr/screens/auth.dart';
@@ -7,7 +7,11 @@ import 'package:gdg_gnr/screens/chat.dart';
 import 'package:gdg_gnr/screens/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() => runApp(MainWidget());
+List<CameraDescription> cameras;
+Future<Null> main() async {
+  cameras = await availableCameras();
+  runApp(MainWidget());
+}
 
 class MainWidget extends StatefulWidget {
   _MainWidgetState createState() => _MainWidgetState();

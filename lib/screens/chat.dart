@@ -152,7 +152,7 @@ class _ChatListState extends State<ChatList> {
                                     document['id'] == curUser.id
                                         ? SizedBox()
                                         : Text(
-                                            document['author'],
+                                            document['author'].split(' ')[0],
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 15.0),
@@ -186,15 +186,20 @@ class _ChatListState extends State<ChatList> {
                     child: TextFormField(
                       validator: (String text) {
                         if (text.isEmpty) {
-                          return 'What you tryin\' to send?';
+                          return 'What you tryin\' to send? :/';
                         }
                       },
                       controller: msgController,
                       decoration: InputDecoration(
+                          prefixIcon: IconButton(
+                            icon: Icon(Icons.camera),
+                            onPressed: () => print('Not now'),
+                            color: Colors.white,
+                            tooltip: 'Camera',
+                          ),
                           border: InputBorder.none,
                           suffixIcon: IconButton(
                             icon: Icon(Icons.send),
-                            color: Colors.white,
                             onPressed: () {
                               if (_formKey.currentState.validate()) {
                                 _sendNewMsg(msgController.text);
