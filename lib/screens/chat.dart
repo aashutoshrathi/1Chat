@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
@@ -6,9 +7,11 @@ import 'package:gdg_gnr/components/rich_text_view.dart';
 import 'package:gdg_gnr/models/user.dart';
 import 'package:gdg_gnr/screens/auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:gdg_gnr/screens/camera_screen.dart';
+// import 'package:gdg_gnr/screens/camera_screen.dart';
 import 'package:gdg_gnr/screens/login.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ChatList extends StatefulWidget {
   final cameras;
@@ -33,7 +36,7 @@ class _ChatListState extends State<ChatList> {
   final msgController = TextEditingController();
   final scrollController = ScrollController();
 
-  void _sendNewMsg(String msg) {
+  void _sendNewMsg(String msg, bool image) {
     var instance = Firestore.instance;
     CollectionReference ref = instance.collection('chat_133');
     ref.add({
@@ -41,7 +44,8 @@ class _ChatListState extends State<ChatList> {
       'img': '${curUser.imgURL}',
       'author': '${curUser.name}',
       'msg': '$msg',
-      'timestamp': DateTime.now()
+      'timestamp': DateTime.now(),
+      'isImage': image
     });
     msgController.clear();
     SystemChannels.textInput.invokeMethod('TextInput.hide');
@@ -50,6 +54,30 @@ class _ChatListState extends State<ChatList> {
       curve: Curves.easeOut,
       duration: const Duration(milliseconds: 400),
     );
+  }
+
+  Future<Null> _pickAndSaveCamImage() async {
+    File imageFile = await ImagePicker.pickImage(source: ImageSource.camera);
+    StorageReference ref = FirebaseStorage.instance
+        .ref()
+        .child(curUser.id)
+        .child("camera-${DateTime.now().millisecondsSinceEpoch}.png");
+    StorageUploadTask uploadTask = ref.putFile(imageFile);
+    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    String imageURL = await taskSnapshot.ref.getDownloadURL();
+    _sendNewMsg(imageURL, true);
+  }
+
+  Future<Null> _pickAndSaveGalleryImage() async {
+    File imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+    StorageReference ref = FirebaseStorage.instance
+        .ref()
+        .child(curUser.id)
+        .child("gallery-${DateTime.now().millisecondsSinceEpoch}.png");
+    StorageUploadTask uploadTask = ref.putFile(imageFile);
+    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    String imageURL = await taskSnapshot.ref.getDownloadURL();
+    _sendNewMsg(imageURL, true);
   }
 
   String _date(DateTime timestamp) {
@@ -138,7 +166,7 @@ class _ChatListState extends State<ChatList> {
                                   maxWidth: 200.0,
                                 ),
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
+                                    horizontal: 12, vertical: 8),
                                 margin: EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 10),
                                 decoration: BoxDecoration(
@@ -160,7 +188,12 @@ class _ChatListState extends State<ChatList> {
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 15.0),
                                           ),
-                                    RichTextView(text: document['msg']),
+                                    document['isImage'] != null
+                                        ? document['isImage']
+                                            ? Image.network(document['msg'])
+                                            : RichTextView(
+                                                text: document['msg'])
+                                        : RichTextView(text: document['msg']),
                                     Container(
                                       child: Text(_date(document['timestamp']),
                                           textAlign: TextAlign.right,
@@ -194,21 +227,33 @@ class _ChatListState extends State<ChatList> {
                       },
                       controller: msgController,
                       decoration: InputDecoration(
-                          prefixIcon: IconButton(
-                            icon: Icon(Icons.camera),
-                            onPressed: () => Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) {
-                                  return CameraApp(widget.cameras);
-                                })),
-                            color: Colors.white,
-                            tooltip: 'Camera',
+                          prefixIcon: Row(
+                            children: <Widget>[
+                              IconButton(
+                                icon: Icon(Icons.camera),
+                                // Will remove this shit in separate commit
+                                // onPressed: () => Navigator.push(context,
+                                //         MaterialPageRoute(builder: (context) {
+                                //       return CameraApp(widget.cameras);
+                                //     })),
+                                onPressed: () => _pickAndSaveCamImage(),
+                                color: Colors.white,
+                                tooltip: 'Camera',
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.photo_library),
+                                onPressed: () => _pickAndSaveGalleryImage(),
+                                color: Colors.white,
+                                tooltip: 'Gallery',
+                              ),
+                            ],
                           ),
                           border: InputBorder.none,
                           suffixIcon: IconButton(
                             icon: Icon(Icons.send),
                             onPressed: () {
                               if (_formKey.currentState.validate()) {
-                                _sendNewMsg(msgController.text);
+                                _sendNewMsg(msgController.text, false);
                               }
                             },
                           ),
