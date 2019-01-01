@@ -39,9 +39,6 @@ class _MainWidgetState extends State<MainWidget> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: AppBar(
-          title: Text('1Chat β'),
-        ),
         body: _routingWidget,
       ),
       theme: ThemeData.dark(),

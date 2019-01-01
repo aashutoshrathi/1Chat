@@ -83,7 +83,7 @@ class _ChatListState extends State<ChatList> {
                     child: Icon(Icons.exit_to_app, size: 30.0),
                     onTap: () {
                       Auth().signOut();
-                      Navigator.pop(context,
+                      Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) {
                         return LoginPage();
                       }));
