@@ -61,7 +61,7 @@ class _ChatListState extends State<ChatList> {
     StorageReference ref = FirebaseStorage.instance
         .ref()
         .child(curUser.id)
-        .child("camera-${DateTime.now().millisecondsSinceEpoch}.png");
+        .child("camera-${DateTime.now().millisecondsSinceEpoch}.jpg");
     StorageUploadTask uploadTask = ref.putFile(imageFile);
     StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
     String imageURL = await taskSnapshot.ref.getDownloadURL();
@@ -73,7 +73,7 @@ class _ChatListState extends State<ChatList> {
     StorageReference ref = FirebaseStorage.instance
         .ref()
         .child(curUser.id)
-        .child("gallery-${DateTime.now().millisecondsSinceEpoch}.png");
+        .child("gallery-${DateTime.now().millisecondsSinceEpoch}.jpg");
     StorageUploadTask uploadTask = ref.putFile(imageFile);
     StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
     String imageURL = await taskSnapshot.ref.getDownloadURL();
@@ -227,26 +227,32 @@ class _ChatListState extends State<ChatList> {
                       },
                       controller: msgController,
                       decoration: InputDecoration(
-                          prefixIcon: Row(
-                            children: <Widget>[
-                              IconButton(
-                                icon: Icon(Icons.camera),
-                                // Will remove this shit in separate commit
-                                // onPressed: () => Navigator.push(context,
-                                //         MaterialPageRoute(builder: (context) {
-                                //       return CameraApp(widget.cameras);
-                                //     })),
-                                onPressed: () => _pickAndSaveCamImage(),
-                                color: Colors.white,
-                                tooltip: 'Camera',
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.photo_library),
-                                onPressed: () => _pickAndSaveGalleryImage(),
-                                color: Colors.white,
-                                tooltip: 'Gallery',
-                              ),
-                            ],
+                          // prefixIcon: Row(
+                          //   children: <Widget>[
+                          //     IconButton(
+                          //       icon: Icon(Icons.camera),
+                          //       // Will remove this shit in separate commit
+                          //       // onPressed: () => Navigator.push(context,
+                          //       //         MaterialPageRoute(builder: (context) {
+                          //       //       return CameraApp(widget.cameras);
+                          //       //     })),
+                          //       onPressed: () => _pickAndSaveCamImage(),
+                          //       color: Colors.white,
+                          //       tooltip: 'Camera',
+                          //     ),
+                          //     IconButton(
+                          //       icon: Icon(Icons.photo_library),
+                          //       onPressed: () => _pickAndSaveGalleryImage(),
+                          //       color: Colors.white,
+                          //       tooltip: 'Gallery',
+                          //     ),
+                          //   ],
+                          // ),
+                          prefixIcon: IconButton(
+                            icon: Icon(Icons.camera),
+                            onPressed: () => _pickAndSaveCamImage(),
+                            color: Colors.white,
+                            tooltip: 'Camera',
                           ),
                           border: InputBorder.none,
                           suffixIcon: IconButton(
