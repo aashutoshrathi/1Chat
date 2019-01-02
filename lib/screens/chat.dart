@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
-import 'package:gdg_gnr/components/rich_text_view.dart';
+import 'package:gdg_gnr/utils/rich_text_view.dart';
 import 'package:gdg_gnr/models/user.dart';
 import 'package:gdg_gnr/screens/auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -12,6 +12,7 @@ import 'package:gdg_gnr/screens/login.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter/scheduler.dart';
 
 class ChatList extends StatefulWidget {
   final cameras;
@@ -29,6 +30,13 @@ class _ChatListState extends State<ChatList> {
         curUser = user;
       });
     }
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    });
     super.initState();
   }
 
@@ -80,8 +88,85 @@ class _ChatListState extends State<ChatList> {
     _sendNewMsg(imageURL, true);
   }
 
+  void _openImage(BuildContext context, document) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (ctx) => Scaffold(
+              appBar: AppBar(
+                title: Text('Image by ${document['author']}'),
+                actions: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.more_vert),
+                    onPressed: () => print('pressed'),
+                  )
+                ],
+              ),
+              body: Center(
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(
+                      height: 50.0,
+                    ),
+                    Hero(
+                      tag: document['msg'],
+                      child: CachedNetworkImage(
+                        imageUrl: document['msg'],
+                        placeholder: new CircularProgressIndicator(),
+                        errorWidget: new Icon(Icons.error),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            'Sent by ${document['author']}',
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                fontSize: 15.0, fontWeight: FontWeight.w600),
+                          ),
+                          Text('at ${_fullDate(document['timestamp'])}')
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            )));
+  }
+
+  void _showProfileImage(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (ctx) => Scaffold(
+            appBar: AppBar(
+              title: Text('${curUser.name}'),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.more_vert),
+                  onPressed: () => print('pressed'),
+                )
+              ],
+            ),
+            body: Center(
+              child: Hero(
+                tag: curUser.id,
+                child: CachedNetworkImage(
+                  imageUrl: curUser.imgURL,
+                  placeholder: new CircularProgressIndicator(),
+                  errorWidget: new Icon(Icons.error),
+                ),
+              ),
+            ))));
+  }
+
   String _date(DateTime timestamp) {
     return DateFormat.jm().format(timestamp);
+  }
+
+  String _fullDate(DateTime timestamp) {
+    return DateFormat.jm().add_yMMMEd().format(timestamp);
   }
 
   @override
@@ -98,9 +183,7 @@ class _ChatListState extends State<ChatList> {
                   child: CircleAvatar(
                     backgroundImage: CachedNetworkImageProvider(curUser.imgURL),
                   ),
-                  onTap: () {
-                    print('User Profile');
-                  },
+                  onTap: () => _showProfileImage(context),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.0),
@@ -183,7 +266,18 @@ class _ChatListState extends State<ChatList> {
                                           ),
                                     document['isImage'] != null
                                         ? document['isImage']
-                                            ? Image.network(document['msg'])
+                                            ? GestureDetector(
+                                                onTap: () => _openImage(
+                                                    context, document),
+                                                child: Hero(
+                                                    tag: document['msg'],
+                                                    child: CachedNetworkImage(
+                                                      imageUrl: document['msg'],
+                                                      placeholder:
+                                                          new CircularProgressIndicator(),
+                                                      errorWidget:
+                                                          new Icon(Icons.error),
+                                                    )))
                                             : RichTextView(
                                                 text: document['msg'])
                                         : RichTextView(text: document['msg']),
@@ -221,27 +315,6 @@ class _ChatListState extends State<ChatList> {
                       },
                       controller: msgController,
                       decoration: InputDecoration(
-                          // prefixIcon: Row(
-                          //   children: <Widget>[
-                          //     IconButton(
-                          //       icon: Icon(Icons.camera),
-                          //       // Will remove this shit in separate commit
-                          //       // onPressed: () => Navigator.push(context,
-                          //       //         MaterialPageRoute(builder: (context) {
-                          //       //       return CameraApp(widget.cameras);
-                          //       //     })),
-                          //       onPressed: () => _pickAndSaveCamImage(),
-                          //       color: Colors.white,
-                          //       tooltip: 'Camera',
-                          //     ),
-                          //     IconButton(
-                          //       icon: Icon(Icons.photo_library),
-                          //       onPressed: () => _pickAndSaveGalleryImage(),
-                          //       color: Colors.white,
-                          //       tooltip: 'Gallery',
-                          //     ),
-                          //   ],
-                          // ),
                           prefixIcon: IconButton(
                             icon: Icon(Icons.camera),
                             onPressed: () => _pickAndSaveCamImage(),
