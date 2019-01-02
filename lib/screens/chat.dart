@@ -15,8 +15,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/scheduler.dart';
 
 class ChatList extends StatefulWidget {
-  final cameras;
-  ChatList(this.cameras);
   _ChatListState createState() => _ChatListState();
 }
 
@@ -193,7 +191,7 @@ class _ChatListState extends State<ChatList> {
                       Auth().signOut();
                       Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) {
-                        return LoginPage(widget.cameras);
+                        return LoginPage();
                       }));
                     },
                   ),
