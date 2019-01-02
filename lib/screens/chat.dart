@@ -7,7 +7,6 @@ import 'package:gdg_gnr/utils/rich_text_view.dart';
 import 'package:gdg_gnr/models/user.dart';
 import 'package:gdg_gnr/screens/auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-// import 'package:gdg_gnr/screens/camera_screen.dart';
 import 'package:gdg_gnr/screens/login.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -125,7 +124,7 @@ class _ChatListState extends State<ChatList> {
                             style: TextStyle(
                                 fontSize: 15.0, fontWeight: FontWeight.w600),
                           ),
-                          Text('at ${_fullDate(document['timestamp'])}')
+                          Text('at ${_fullDate(document['timestamp'])}'),
                         ],
                       ),
                     )
@@ -166,6 +165,11 @@ class _ChatListState extends State<ChatList> {
   String _fullDate(DateTime timestamp) {
     return DateFormat.jm().add_yMMMEd().format(timestamp);
   }
+
+  Widget messageBox(String text) => GestureDetector(
+        child: RichTextView(text: text),
+        onLongPress: () => print('Delete?'),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -276,9 +280,8 @@ class _ChatListState extends State<ChatList> {
                                                       errorWidget:
                                                           new Icon(Icons.error),
                                                     )))
-                                            : RichTextView(
-                                                text: document['msg'])
-                                        : RichTextView(text: document['msg']),
+                                            : messageBox(document['msg'])
+                                        : messageBox(document['msg']),
                                     Container(
                                       child: Text(_date(document['timestamp']),
                                           textAlign: TextAlign.right,
@@ -305,7 +308,6 @@ class _ChatListState extends State<ChatList> {
                     elevation: 5.0,
                     borderRadius: BorderRadius.circular(20.0),
                     child: TextFormField(
-                      keyboardType: TextInputType.multiline,
                       validator: (String text) {
                         if (text.isEmpty) {
                           return 'What you tryin\' to send? :/';
