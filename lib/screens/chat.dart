@@ -55,7 +55,7 @@ class _ChatListState extends State<ChatList> {
     msgController.clear();
     SystemChannels.textInput.invokeMethod('TextInput.hide');
     scrollController.animateTo(
-      scrollController.position.maxScrollExtent + 160,
+      scrollController.position.maxScrollExtent,
       curve: Curves.easeOut,
       duration: const Duration(milliseconds: 400),
     );
@@ -317,7 +317,7 @@ class _ChatListState extends State<ChatList> {
                     child: TextFormField(
                       validator: (String text) {
                         if (text.isEmpty) {
-                          return 'What you tryin\' to send? :/';
+                          return;
                         }
                       },
                       controller: msgController,
@@ -333,7 +333,8 @@ class _ChatListState extends State<ChatList> {
                             icon: Icon(Icons.send),
                             tooltip: 'Send',
                             onPressed: () {
-                              if (_formKey.currentState.validate()) {
+                              if (_formKey.currentState.validate() &&
+                                  msgController.text.trim().length > 0) {
                                 _sendNewMsg(msgController.text, false);
                               }
                             },
