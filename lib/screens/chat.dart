@@ -305,6 +305,9 @@ class _ChatListState extends State<ChatList> {
                 },
               ),
             ),
+            SizedBox(
+              height: 10.0,
+            ),
             Form(
                 key: _formKey,
                 // This thing goes to the bottom
@@ -317,7 +320,7 @@ class _ChatListState extends State<ChatList> {
                     child: TextFormField(
                       validator: (String text) {
                         if (text.isEmpty) {
-                          return;
+                          return ' ';
                         }
                       },
                       controller: msgController,
@@ -346,7 +349,7 @@ class _ChatListState extends State<ChatList> {
                   ),
                 )),
             SizedBox(
-              height: 15.0,
+              height: 10.0,
             )
           ],
         ),
