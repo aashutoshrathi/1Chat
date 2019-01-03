@@ -8,6 +8,21 @@
 
 <img width="250" height="450" src="assets/demo/demo.gif" />
 
+## Features
+
+- You can send text messages
+- One can delete their own texts.
+- Send Image using camera and gallery
+- Open Image in a hero animation
+
+## ToDos
+
+- Fix unwanted keyboard padding.
+- Fix image hero container size.
+- Add Delete image feature
+- Add Loading Bar when uploading images.
+- Add send image from Gallery button (Not able to add multiple prefix icons)
+- Implement multiple chatrooms (After we complete single one)
 
 ## Author
 
