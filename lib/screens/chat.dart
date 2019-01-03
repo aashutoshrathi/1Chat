@@ -251,21 +251,24 @@ class _ChatListState extends State<ChatList> {
                                     color: document['id'] == curUser.id
                                         ? Colors.blueAccent
                                         : Colors.black,
-                                    borderRadius: BorderRadius.circular(25.0)),
+                                    borderRadius: BorderRadius.circular(10.0)),
                                 child: Column(
                                   crossAxisAlignment:
                                       document['id'] == curUser.id
                                           ? CrossAxisAlignment.end
                                           : CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    document['id'] == curUser.id
-                                        ? SizedBox()
-                                        : Text(
-                                            document['author'].split(' ')[0],
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 15.0),
-                                          ),
+                                    Container(
+                                      margin: EdgeInsets.only(bottom: 5.0),
+                                      child: document['id'] == curUser.id
+                                          ? SizedBox()
+                                          : Text(
+                                              document['author'].split(' ')[0],
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w800,
+                                                  fontSize: 15.0),
+                                            ),
+                                    ),
                                     document['isImage'] != null
                                         ? document['isImage']
                                             ? GestureDetector(
@@ -283,6 +286,10 @@ class _ChatListState extends State<ChatList> {
                                             : messageBox(document['msg'])
                                         : messageBox(document['msg']),
                                     Container(
+                                      margin: document['isImage'] != null &&
+                                              document['isImage']
+                                          ? EdgeInsets.only(top: 10.0)
+                                          : EdgeInsets.only(top: 3.0),
                                       child: Text(_date(document['timestamp']),
                                           textAlign: TextAlign.right,
                                           style: TextStyle(fontSize: 10.0)),
