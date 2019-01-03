@@ -61,24 +61,14 @@ class _ChatListState extends State<ChatList> {
     );
   }
 
-  Future<Null> _pickAndSaveCamImage() async {
-    File imageFile = await ImagePicker.pickImage(source: ImageSource.camera);
-    StorageReference ref = FirebaseStorage.instance
-        .ref()
-        .child(curUser.id)
-        .child("camera-${DateTime.now().millisecondsSinceEpoch}.jpg");
-    StorageUploadTask uploadTask = ref.putFile(imageFile);
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    String imageURL = await taskSnapshot.ref.getDownloadURL();
-    _sendNewMsg(imageURL, true);
-  }
-
-  Future<Null> _pickAndSaveGalleryImage() async {
-    File imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
-    StorageReference ref = FirebaseStorage.instance
-        .ref()
-        .child(curUser.id)
-        .child("gallery-${DateTime.now().millisecondsSinceEpoch}.jpg");
+  Future<Null> _pickAndUploadImage(int choice) async {
+    String filename = choice == 0
+        ? "camera-${DateTime.now().millisecondsSinceEpoch}.jpg"
+        : "gallery-${DateTime.now().millisecondsSinceEpoch}.jpg";
+    File imageFile = await ImagePicker.pickImage(
+        source: choice == 0 ? ImageSource.camera : ImageSource.gallery);
+    StorageReference ref =
+        FirebaseStorage.instance.ref().child(curUser.id).child(filename);
     StorageUploadTask uploadTask = ref.putFile(imageFile);
     StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
     String imageURL = await taskSnapshot.ref.getDownloadURL();
@@ -327,7 +317,7 @@ class _ChatListState extends State<ChatList> {
                       decoration: InputDecoration(
                           prefixIcon: IconButton(
                             icon: Icon(Icons.camera),
-                            onPressed: () => _pickAndSaveCamImage(),
+                            onPressed: () => _pickAndUploadImage(0),
                             color: Colors.white,
                             tooltip: 'Camera',
                           ),
