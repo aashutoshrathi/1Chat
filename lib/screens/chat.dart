@@ -388,9 +388,7 @@ class _ChatListState extends State<ChatList> {
 
   Widget _buildAboutDialog(BuildContext context, String docID) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0)
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
       title: Text('Delete this message?'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
