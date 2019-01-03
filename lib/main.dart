@@ -13,7 +13,7 @@ class MainWidget extends StatefulWidget {
 }
 
 class _MainWidgetState extends State<MainWidget> {
-  String _kUserPref = "UserPref";
+  final String _kUserPref = "UserPref";
   Widget _routingWidget = LoginPage();
 
   Future<Null> getSharedPref() async {

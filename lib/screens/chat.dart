@@ -61,6 +61,12 @@ class _ChatListState extends State<ChatList> {
     );
   }
 
+  void _deleteMsg(String docID) {
+    var instance = Firestore.instance;
+    CollectionReference ref = instance.collection('chat_133');
+    ref.document(docID).delete().catchError((e) => print(e));
+  }
+
   Future<Null> _pickAndUploadImage(int choice) async {
     String filename = choice == 0
         ? "camera-${DateTime.now().millisecondsSinceEpoch}.jpg"
@@ -97,8 +103,8 @@ class _ChatListState extends State<ChatList> {
                       tag: document['msg'],
                       child: CachedNetworkImage(
                         imageUrl: document['msg'],
-                        placeholder: new CircularProgressIndicator(),
-                        errorWidget: new Icon(Icons.error),
+                        placeholder: CircularProgressIndicator(),
+                        errorWidget: Icon(Icons.error),
                       ),
                     ),
                     SizedBox(
@@ -141,8 +147,8 @@ class _ChatListState extends State<ChatList> {
                 tag: curUser.id,
                 child: CachedNetworkImage(
                   imageUrl: curUser.imgURL,
-                  placeholder: new CircularProgressIndicator(),
-                  errorWidget: new Icon(Icons.error),
+                  placeholder: CircularProgressIndicator(),
+                  errorWidget: Icon(Icons.error),
                 ),
               ),
             ))));
@@ -156,9 +162,16 @@ class _ChatListState extends State<ChatList> {
     return DateFormat.jm().add_yMMMEd().format(timestamp);
   }
 
-  Widget messageBox(String text) => GestureDetector(
+  Widget _messageBox(String text, String docID, bool userCheck) =>
+      GestureDetector(
         child: RichTextView(text: text),
-        onLongPress: () => print('Delete?'),
+        onLongPress: () => userCheck
+            ? showDialog(
+                context: context,
+                builder: (BuildContext context) =>
+                    _buildAboutDialog(context, docID),
+              )
+            : print('Hello'),
       );
 
   @override
@@ -203,12 +216,12 @@ class _ChatListState extends State<ChatList> {
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError)
-                    return new Text('Error: ${snapshot.error}');
+                    return Text('Error: ${snapshot.error}');
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
-                      return Center(child: new Text('Loading...'));
+                      return Center(child: CircularProgressIndicator());
                     default:
-                      return new ListView(
+                      return ListView(
                         controller: scrollController,
                         children: snapshot.data.documents
                             .map((DocumentSnapshot document) {
@@ -269,12 +282,18 @@ class _ChatListState extends State<ChatList> {
                                                     child: CachedNetworkImage(
                                                       imageUrl: document['msg'],
                                                       placeholder:
-                                                          new CircularProgressIndicator(),
+                                                          CircularProgressIndicator(),
                                                       errorWidget:
-                                                          new Icon(Icons.error),
+                                                          Icon(Icons.error),
                                                     )))
-                                            : messageBox(document['msg'])
-                                        : messageBox(document['msg']),
+                                            : _messageBox(
+                                                document['msg'],
+                                                document.documentID,
+                                                document['id'] == curUser.id)
+                                        : _messageBox(
+                                            document['msg'],
+                                            document.documentID,
+                                            document['id'] == curUser.id),
                                     Container(
                                       margin: document['isImage'] != null &&
                                               document['isImage']
@@ -298,46 +317,65 @@ class _ChatListState extends State<ChatList> {
             SizedBox(
               height: 10.0,
             ),
-            Form(
-                key: _formKey,
-                // This thing goes to the bottom
-                child: Padding(
-                  padding: EdgeInsets.only(left: 15.0, right: 15.0),
-                  child: Material(
-                    color: Colors.grey[600],
-                    elevation: 5.0,
-                    borderRadius: BorderRadius.circular(20.0),
-                    child: TextFormField(
-                      validator: (String text) {
-                        if (text.isEmpty) {
-                          return ' ';
-                        }
-                      },
-                      controller: msgController,
-                      decoration: InputDecoration(
-                          prefixIcon: IconButton(
-                            icon: Icon(Icons.camera),
-                            onPressed: () => _pickAndUploadImage(0),
-                            color: Colors.white,
-                            tooltip: 'Camera',
-                          ),
-                          border: InputBorder.none,
-                          suffixIcon: IconButton(
-                            icon: Icon(Icons.send),
-                            tooltip: 'Send',
-                            onPressed: () {
-                              if (_formKey.currentState.validate() &&
-                                  msgController.text.trim().length > 0) {
-                                _sendNewMsg(msgController.text, false);
-                              }
-                            },
-                          ),
-                          contentPadding:
-                              EdgeInsets.only(left: 15.0, top: 15.0),
-                          hintText: 'Type message here...'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Expanded(
+                  child: Form(
+                    key: _formKey,
+                    // This thing goes to the bottom
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 15.0, right: 10.0),
+                      child: Material(
+                        color: Colors.grey[600],
+                        elevation: 5.0,
+                        borderRadius: BorderRadius.circular(25.0),
+                        child: TextFormField(
+                          validator: (String text) {
+                            if (text.isEmpty) {
+                              return;
+                            }
+                          },
+                          controller: msgController,
+                          decoration: InputDecoration(
+                              prefixIcon: IconButton(
+                                icon: Icon(Icons.camera),
+                                onPressed: () => _pickAndUploadImage(0),
+                                color: Colors.white,
+                                tooltip: 'Camera',
+                              ),
+                              border: InputBorder.none,
+                              contentPadding:
+                                  EdgeInsets.only(left: 15.0, top: 15.0),
+                              hintText: 'Type message here...'),
+                        ),
+                      ),
                     ),
                   ),
-                )),
+                ),
+                FloatingActionButton(
+                  mini: true,
+                  tooltip: 'Send',
+                  backgroundColor: Colors.blue,
+                  child: Center(
+                      child: Icon(
+                    Icons.send,
+                    color: Colors.white,
+                    size: 20.0,
+                  )),
+                  onPressed: () {
+                    if (_formKey.currentState.validate() &&
+                        msgController.text.trim().length > 0) {
+                      _sendNewMsg(
+                          msgController.text.trimRight().trimLeft(), false);
+                    }
+                  },
+                ),
+                SizedBox(
+                  width: 5.0,
+                )
+              ],
+            ),
             SizedBox(
               height: 10.0,
             )
@@ -345,6 +383,38 @@ class _ChatListState extends State<ChatList> {
         ),
       ),
       theme: ThemeData.dark(),
+    );
+  }
+
+  Widget _buildAboutDialog(BuildContext context, String docID) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0)
+      ),
+      title: Text('Delete this message?'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+              'This will delete message permanently.\nYou won\'t ever be able to recover it later')
+        ],
+      ),
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () {
+            _deleteMsg(docID);
+            Navigator.of(context).pop();
+          },
+          child: Text('Sure! Do it.'),
+        ),
+        FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text('Oops! No.'),
+        ),
+      ],
     );
   }
 }
