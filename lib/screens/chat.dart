@@ -175,6 +175,33 @@ class _ChatListState extends State<ChatList> {
             : print('Hello'),
       );
 
+  Widget _messageContent(doc) => doc['isImage'] != null && doc['isImage']
+      ? GestureDetector(
+          onTap: () => _openImage(context, doc),
+          onLongPress: () => doc['id'] == curUser.id
+              ? showDialog(
+                  context: context,
+                  builder: (BuildContext context) =>
+                      _buildAboutDialog(context, doc.documentID),
+                )
+              : print('Hello'),
+          child: Hero(
+              tag: doc['msg'],
+              child: CachedNetworkImage(
+                imageUrl: doc['msg'],
+                placeholder: CircularProgressIndicator(),
+                errorWidget: Icon(Icons.error),
+              )))
+      : _messageBox(doc['msg'], doc.documentID, doc['id'] == curUser.id);
+
+  Widget _timeStamp(doc) => Container(
+        margin: doc['isImage'] != null && doc['isImage']
+            ? EdgeInsets.only(top: 10.0)
+            : EdgeInsets.only(top: 3.0),
+        child: Text(_date(doc['timestamp']),
+            textAlign: TextAlign.right, style: TextStyle(fontSize: 10.0)),
+      );
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -232,15 +259,17 @@ class _ChatListState extends State<ChatList> {
                                 ? MainAxisAlignment.end
                                 : MainAxisAlignment.start,
                             children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: document['id'] == curUser.id
-                                    ? SizedBox()
-                                    : CircleAvatar(
-                                        backgroundImage:
-                                            CachedNetworkImageProvider(
-                                                document['img']),
-                                      ),
+                              GestureDetector(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: document['id'] == curUser.id
+                                      ? SizedBox()
+                                      : CircleAvatar(
+                                          backgroundImage:
+                                              CachedNetworkImageProvider(
+                                                  document['img']),
+                                        ),
+                                ),
                               ),
                               Container(
                                 // All styling here only
@@ -273,37 +302,8 @@ class _ChatListState extends State<ChatList> {
                                                   fontSize: 15.0),
                                             ),
                                     ),
-                                    document['isImage'] != null
-                                        ? document['isImage']
-                                            ? GestureDetector(
-                                                onTap: () => _openImage(
-                                                    context, document),
-                                                child: Hero(
-                                                    tag: document['msg'],
-                                                    child: CachedNetworkImage(
-                                                      imageUrl: document['msg'],
-                                                      placeholder:
-                                                          CircularProgressIndicator(),
-                                                      errorWidget:
-                                                          Icon(Icons.error),
-                                                    )))
-                                            : _messageBox(
-                                                document['msg'],
-                                                document.documentID,
-                                                document['id'] == curUser.id)
-                                        : _messageBox(
-                                            document['msg'],
-                                            document.documentID,
-                                            document['id'] == curUser.id),
-                                    Container(
-                                      margin: document['isImage'] != null &&
-                                              document['isImage']
-                                          ? EdgeInsets.only(top: 10.0)
-                                          : EdgeInsets.only(top: 3.0),
-                                      child: Text(_date(document['timestamp']),
-                                          textAlign: TextAlign.right,
-                                          style: TextStyle(fontSize: 10.0)),
-                                    ),
+                                    _messageContent(document),
+                                    _timeStamp(document),
                                   ],
                                 ),
                               ),

@@ -24,6 +24,7 @@
 - Add send image from Gallery button (Not able to add multiple prefix icons)
 - Implement multiple chatrooms (After we complete single one)
 - Add E2EE using one more attribute as key in every chat room.
+- Add YouTube player whenever, a YouTube video is sent as msg body.
 
 ## Author
 
