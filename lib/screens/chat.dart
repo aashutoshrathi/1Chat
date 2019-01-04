@@ -146,7 +146,8 @@ class _ChatListState extends State<ChatList> {
               child: Hero(
                 tag: curUser.id,
                 child: CachedNetworkImage(
-                  imageUrl: curUser.imgURL,
+                  imageUrl: curUser.imgURL.replaceAll('s96-c', 's400-c'),
+                  // Increase image size
                   placeholder: CircularProgressIndicator(),
                   errorWidget: Icon(Icons.error),
                 ),

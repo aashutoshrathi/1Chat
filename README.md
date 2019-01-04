@@ -4,7 +4,7 @@
 <p align="center">
 <p align="center">Flutter and Firestre powered Chat Application</p>
 
-## Demo
+## Demo (To be updated)
 
 <img width="250" height="450" src="assets/demo/demo.gif" />
 
@@ -23,6 +23,7 @@
 - Add Loading Bar when uploading images.
 - Add send image from Gallery button (Not able to add multiple prefix icons)
 - Implement multiple chatrooms (After we complete single one)
+- Add E2EE using one more attribute as key in every chat room.
 
 ## Author
 
