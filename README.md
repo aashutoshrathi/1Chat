@@ -2,7 +2,7 @@
 <h1 align="center">1Chat<sup>β</sup></h1>
 
 <p align="center">
-<p align="center">Flutter and Firestre powered Chat Application</p>
+<p align="center">Flutter and Firebase powered Chat Application</p>
 
 ## Demo (To be updated)
 
