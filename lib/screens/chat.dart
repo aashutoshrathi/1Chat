@@ -11,14 +11,12 @@ import 'package:gdg_gnr/screens/login.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter/scheduler.dart';
 
 class ChatList extends StatefulWidget {
   _ChatListState createState() => _ChatListState();
 }
 
 class _ChatListState extends State<ChatList> {
-  User curUser;
   @override
   initState() {
     User user = Auth().getCurrentUser();
@@ -27,19 +25,16 @@ class _ChatListState extends State<ChatList> {
         curUser = user;
       });
     }
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      scrollController.animateTo(
-        scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    });
     super.initState();
   }
 
+  User curUser;
   final _formKey = GlobalKey<FormState>();
-  final msgController = TextEditingController();
-  final scrollController = ScrollController();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _msgController = TextEditingController();
+  final _scrollController = ScrollController();
+  bool isUploading = false;
+  double progress;
 
   void _sendNewMsg(String msg, bool image) {
     var instance = Firestore.instance;
@@ -52,12 +47,12 @@ class _ChatListState extends State<ChatList> {
       'timestamp': DateTime.now(),
       'isImage': image
     });
-    msgController.clear();
+    _msgController.clear();
     SystemChannels.textInput.invokeMethod('TextInput.hide');
-    scrollController.animateTo(
-      scrollController.position.maxScrollExtent,
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
       curve: Curves.easeOut,
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 100),
     );
   }
 
@@ -73,12 +68,33 @@ class _ChatListState extends State<ChatList> {
         : "gallery-${DateTime.now().millisecondsSinceEpoch}.jpg";
     File imageFile = await ImagePicker.pickImage(
         source: choice == 0 ? ImageSource.camera : ImageSource.gallery);
-    StorageReference ref =
-        FirebaseStorage.instance.ref().child(curUser.id).child(filename);
-    StorageUploadTask uploadTask = ref.putFile(imageFile);
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    String imageURL = await taskSnapshot.ref.getDownloadURL();
-    _sendNewMsg(imageURL, true);
+    if (imageFile.path != null) {
+      StorageReference ref =
+          FirebaseStorage.instance.ref().child(curUser.id).child(filename);
+      StorageUploadTask uploadTask = ref.putFile(imageFile);
+      uploadTask.events.listen((event) {
+        setState(() {
+          isUploading = true;
+          progress = (event.snapshot.bytesTransferred.toDouble() /
+                  event.snapshot.totalByteCount.toDouble()) *
+              100;
+        });
+      }).onError((error) {
+        _scaffoldKey.currentState.showSnackBar(new SnackBar(
+          content: new Text(error.toString()),
+          backgroundColor: Colors.red,
+        ));
+      });
+
+      uploadTask.onComplete.then((snapshot) {
+        setState(() {
+          isUploading = false;
+        });
+      });
+      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+      String imageURL = await taskSnapshot.ref.getDownloadURL();
+      _sendNewMsg(imageURL, true);
+    }
   }
 
   void _openImage(BuildContext context, document) {
@@ -111,8 +127,11 @@ class _ChatListState extends State<ChatList> {
                       height: 20,
                     ),
                     Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      constraints: BoxConstraints(
+                        maxWidth: 200.0,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           Text(
                             'Sent by ${document['author']}',
@@ -170,7 +189,7 @@ class _ChatListState extends State<ChatList> {
             ? showDialog(
                 context: context,
                 builder: (BuildContext context) =>
-                    _buildAboutDialog(context, docID),
+                    _buildDeleteDialog(context, docID),
               )
             : print('Hello'),
       );
@@ -182,7 +201,7 @@ class _ChatListState extends State<ChatList> {
               ? showDialog(
                   context: context,
                   builder: (BuildContext context) =>
-                      _buildAboutDialog(context, doc.documentID),
+                      _buildDeleteDialog(context, doc.documentID),
                 )
               : print('Hello'),
           child: Hero(
@@ -202,11 +221,22 @@ class _ChatListState extends State<ChatList> {
             textAlign: TextAlign.right, style: TextStyle(fontSize: 10.0)),
       );
 
+  Widget _authorText(doc) => Container(
+        margin: EdgeInsets.only(bottom: 5.0),
+        child: doc['id'] == curUser.id
+            ? SizedBox()
+            : Text(
+                doc['author'].split(' ')[0],
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15.0),
+              ),
+      );
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Text('1Chat β'),
           actions: <Widget>[
@@ -250,7 +280,7 @@ class _ChatListState extends State<ChatList> {
                       return Center(child: CircularProgressIndicator());
                     default:
                       return ListView(
-                        controller: scrollController,
+                        controller: _scrollController,
                         children: snapshot.data.documents
                             .map((DocumentSnapshot document) {
                           return Container(
@@ -260,6 +290,7 @@ class _ChatListState extends State<ChatList> {
                                 : MainAxisAlignment.start,
                             children: <Widget>[
                               GestureDetector(
+                                onTap: () => print('User'),
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: document['id'] == curUser.id
@@ -291,17 +322,7 @@ class _ChatListState extends State<ChatList> {
                                           ? CrossAxisAlignment.end
                                           : CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Container(
-                                      margin: EdgeInsets.only(bottom: 5.0),
-                                      child: document['id'] == curUser.id
-                                          ? SizedBox()
-                                          : Text(
-                                              document['author'].split(' ')[0],
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w800,
-                                                  fontSize: 15.0),
-                                            ),
-                                    ),
+                                    _authorText(document),
                                     _messageContent(document),
                                     _timeStamp(document),
                                   ],
@@ -316,39 +337,52 @@ class _ChatListState extends State<ChatList> {
               ),
             ),
             SizedBox(
-              height: 10.0,
+              height: 7.0,
             ),
+            isUploading
+                ? SizedBox(
+                    height: 7.0,
+                    child: Text('Uploading ${progress.toStringAsFixed(2)}%'),
+                  )
+                : SizedBox(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Expanded(
-                  child: Form(
-                    key: _formKey,
-                    // This thing goes to the bottom
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 15.0, right: 10.0),
-                      child: Material(
-                        color: Colors.grey[600],
-                        elevation: 5.0,
-                        borderRadius: BorderRadius.circular(25.0),
-                        child: TextFormField(
-                          validator: (String text) {
-                            if (text.isEmpty) {
-                              return;
-                            }
-                          },
-                          controller: msgController,
-                          decoration: InputDecoration(
-                              prefixIcon: IconButton(
-                                icon: Icon(Icons.camera),
-                                onPressed: () => _pickAndUploadImage(0),
-                                color: Colors.white,
-                                tooltip: 'Camera',
-                              ),
-                              border: InputBorder.none,
-                              contentPadding:
-                                  EdgeInsets.only(left: 15.0, top: 15.0),
-                              hintText: 'Type message here...'),
+                IconButton(
+                  icon: Icon(Icons.photo_library),
+                  onPressed: () => _pickAndUploadImage(1),
+                  tooltip: 'Gallery',
+                ),
+                IconButton(
+                  icon: Icon(Icons.camera),
+                  onPressed: () => _pickAndUploadImage(0),
+                  tooltip: 'Camera',
+                ),
+                Container(
+                  child: Expanded(
+                    child: Form(
+                      key: _formKey,
+                      // This thing goes to the bottom
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 5.0, right: 10.0),
+                        child: Material(
+                          color: Colors.grey[600],
+                          elevation: 5.0,
+                          borderRadius: BorderRadius.circular(25.0),
+                          child: TextFormField(
+                            validator: (String text) {
+                              if (text.isEmpty) {
+                                return;
+                              }
+                            },
+                            controller: _msgController,
+                            decoration: InputDecoration(
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 12.0, vertical: 12.0),
+                                hintText: 'Type message here...',
+                                hintStyle: TextStyle(color: Colors.white70)),
+                          ),
                         ),
                       ),
                     ),
@@ -366,9 +400,9 @@ class _ChatListState extends State<ChatList> {
                   )),
                   onPressed: () {
                     if (_formKey.currentState.validate() &&
-                        msgController.text.trim().length > 0) {
+                        _msgController.text.trim().length > 0) {
                       _sendNewMsg(
-                          msgController.text.trimRight().trimLeft(), false);
+                          _msgController.text.trimRight().trimLeft(), false);
                     }
                   },
                 ),
@@ -387,7 +421,7 @@ class _ChatListState extends State<ChatList> {
     );
   }
 
-  Widget _buildAboutDialog(BuildContext context, String docID) {
+  Widget _buildDeleteDialog(BuildContext context, String docID) {
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
       title: Text('Delete this message?'),
